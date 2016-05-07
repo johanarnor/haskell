@@ -28,7 +28,7 @@ isListConsistent nums
 consistentLoop :: [String] -> Trie -> Bool
 consistentLoop [] _ = True
 consistentLoop (num:nums) trie = isUnique num trie &&
-  consistentLoop nums (insert num trie)
+  consistentLoop nums trie
 
 insert :: String -> Trie -> Trie
 insert [] x = x
