@@ -1,3 +1,4 @@
+-- Not mine, from http://codereview.stackexchange.com/a/92540
 import Control.Monad (replicateM, replicateM_)
 import Data.List (isPrefixOf, sort)
 
