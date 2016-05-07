@@ -21,14 +21,9 @@ readTest = do
 
 isListConsistent :: [String] -> String
 isListConsistent nums
-  | consistentLoop nums populatedTrie = "YES"
+  | all (isUnique populatedTrie) nums = "YES"
   | otherwise = "NO"
     where populatedTrie = foldr insert emptyTrie nums
-
-consistentLoop :: [String] -> Trie -> Bool
-consistentLoop [] _ = True
-consistentLoop (num:nums) trie = isUnique num trie &&
-  consistentLoop nums trie
 
 insert :: String -> Trie -> Trie
 insert [] x = x
@@ -36,8 +31,8 @@ insert (c:cs) (Trie children) = case Map.lookup c children of
   Just childTrie -> Trie (Map.insert c (insert cs childTrie) children)
   Nothing -> Trie (Map.insert c (insert cs emptyTrie) children)
 
-isUnique :: String -> Trie -> Bool
-isUnique [] (Trie children) = Map.null children
-isUnique (c:cs) (Trie children) = case Map.lookup c children of
-  Just childTrie -> isUnique cs childTrie
+isUnique :: Trie -> String  -> Bool
+isUnique (Trie children) [] = Map.null children
+isUnique (Trie children) (c:cs) = case Map.lookup c children of
+  Just childTrie -> isUnique childTrie cs
   Nothing -> True
