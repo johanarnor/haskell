@@ -11,11 +11,11 @@ main = do
 readTest :: IO [String]
 readTest = do
   noNumbers <- readLn
-  numbers <- replicateM noNumbers getLine
-  return numbers
+  replicateM noNumbers getLine
 
 isListConsistent :: [String] -> String
-isListConsistent (_:[]) = "YES"
+isListConsistent [] = "YES"
+isListConsistent [_] = "YES"
 isListConsistent (x1:x2:xs)
   | x1 `isPrefixOf` x2 = "NO"
   | otherwise = isListConsistent (x2:xs)

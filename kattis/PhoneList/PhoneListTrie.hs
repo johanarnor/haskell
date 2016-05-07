@@ -1,14 +1,12 @@
 module Main where
 import Control.Monad (replicateM)
-import Data.List (isPrefixOf, delete)
-import qualified Data.IntMap.Strict as Map
-import Data.Char (digitToInt)
+import qualified Data.HashMap.Strict as Map
 
-data Trie = Trie (Map.IntMap Trie)
+data Trie = Trie (Map.HashMap Char Trie)
   deriving (Show)
 
 emptyTrie :: Trie
-emptyTrie = Trie (Map.empty)
+emptyTrie = Trie Map.empty
 
 main :: IO ()
 main = do
@@ -19,8 +17,7 @@ main = do
 readTest :: IO [String]
 readTest = do
   noNumbers <- readLn
-  numbers <- replicateM noNumbers getLine
-  return numbers
+  replicateM noNumbers getLine
 
 isListConsistent :: [String] -> String
 isListConsistent nums
@@ -30,18 +27,17 @@ isListConsistent nums
 
 consistentLoop :: [String] -> Trie -> Bool
 consistentLoop [] _ = True
-consistentLoop (num:nums) trie = case (isUnique num trie) of
-  True -> consistentLoop nums (insert num trie)
-  False -> False
+consistentLoop (num:nums) trie = isUnique num trie &&
+  consistentLoop nums (insert num trie)
 
-insert :: [Char] -> Trie -> Trie
+insert :: String -> Trie -> Trie
 insert [] x = x
-insert (c:cs) (Trie children) = case (Map.lookup (digitToInt c) children) of
-  Just childTrie -> Trie (Map.insert (digitToInt c) (insert cs childTrie) children)
-  Nothing -> Trie (Map.insert (digitToInt c) (insert cs emptyTrie) children)
+insert (c:cs) (Trie children) = case Map.lookup c children of
+  Just childTrie -> Trie (Map.insert c (insert cs childTrie) children)
+  Nothing -> Trie (Map.insert c (insert cs emptyTrie) children)
 
-isUnique :: [Char] -> Trie -> Bool
+isUnique :: String -> Trie -> Bool
 isUnique [] (Trie children) = Map.null children
-isUnique (c:cs) (Trie children) = case (Map.lookup (digitToInt c) children) of
+isUnique (c:cs) (Trie children) = case Map.lookup c children of
   Just childTrie -> isUnique cs childTrie
   Nothing -> True
